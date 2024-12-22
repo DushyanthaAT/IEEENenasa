@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation to get the current path
 import NenasaLogo from "../assets/NenasaLogo.png";
-import { HiMenuAlt2 } from "react-icons/hi";
-import { HiMenuAlt3 } from "react-icons/hi";
+import { HiMenuAlt2, HiMenuAlt3 } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
 const Items = [
@@ -26,9 +26,18 @@ const Items = [
     link: "/contact",
   },
 ];
+
 const Navbar = () => {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [activateIndex, setActivateIndex] = useState(1);
+
+  useEffect(() => {
+    const activeItem = Items.findIndex(
+      (item) => item.link === location.pathname
+    );
+    setActivateIndex(activeItem === -1 ? 1 : activeItem + 1);
+  }, [location]);
 
   return (
     <div className="sticky top-0 z-50 flex py-2 px-7 items-center justify-between bg-white">
@@ -41,10 +50,8 @@ const Navbar = () => {
         {Items.map((Item) => (
           <li
             key={Item.id}
-            className={`text-gray-500 font-semibold text-lg hover:text-pri_blue ${
-              activateIndex === Item.id
-                ? "text-pri_blue"
-                : "hover:text-pri_blue"
+            className={` font-semibold text-lg hover:text-pri_blue ${
+              activateIndex === Item.id ? "text-pri_blue" : "text-gray-500"
             }`}
             onClick={() => setActivateIndex(Item.id)}
           >
@@ -87,7 +94,7 @@ const Navbar = () => {
               }`}
               onClick={() => {
                 setActivateIndex(Item.id);
-                setOpen(false); // Close mobile menu on item click
+                setOpen(false);
               }}
             >
               <Link to={Item.link}>{Item.title}</Link>
