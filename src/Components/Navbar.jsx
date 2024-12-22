@@ -28,13 +28,13 @@ const Items = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="sticky top-0 z-50 flex pt-5 px-7 items-center justify-between">
+    <div className="sticky top-0 z-50 flex py-2 px-7 items-center justify-between bg-white">
       <img
         src={NenasaLogo}
         alt="Nenasa Logo"
         className="w-24 h-auto object-contain"
       />
-      <ul className="gap-10 hidden sm:flex">
+      <ul className="gap-10 hidden sm:flex pt-3">
         {Items.map((Item) => (
           <li
             key={Item.id}
