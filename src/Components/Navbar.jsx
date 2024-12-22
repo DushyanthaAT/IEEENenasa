@@ -28,7 +28,7 @@ const Items = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex pt-5 px-7 items-center justify-between">
+    <div className="sticky top-0 z-50 flex pt-5 px-7 items-center justify-between">
       <img
         src={NenasaLogo}
         alt="Nenasa Logo"
@@ -63,13 +63,13 @@ const Navbar = () => {
 
       {/* responsiveMenu */}
       <div
-        className={`absolute sm:hidden top-16 left-0 w-full bg-white flex flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
+        className={`z- 100 absolute sm:hidden top-16 left-0 w-full bg-white flex flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
           open ? "opacity-100" : "opacity-0"
         }`}
         style={{ transition: "transform 0.3s ease, opacity 0.3s ease" }}
       >
         <ul className="flex flex-col gap-3 w-full items-center py-2">
-          {Items.map((Item, index) => (
+          {Items.map((Item) => (
             <li
               key={Item.id}
               className="text-gray-500 hover:text-white hover:bg-pri_blue w-[90%] text-center py-2 rounded-lg"

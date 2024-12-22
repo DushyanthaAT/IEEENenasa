@@ -6,7 +6,7 @@ import nenasaLogo from "../assets/NenasaLogo.png";
 const Home = () => {
   return (
     <div className="mx-0 md:mx-16 lg:mx-32">
-      <Navbar />
+      <Navbar className="sticky top-0 z-50 bg-white shadow-md" />
 
       <div className="flex flex-col items-center sm:flex-row sm:pt-10">
         <div className="flex-1 flex flex-col relative w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 mx-auto aspect-square items-center justify-center sm:justify-normal">
