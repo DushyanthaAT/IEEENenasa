@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "../Components/Navbar";
 import homeImage from "../assets/homeImage.png";
-import nenasaLogo from "../assets/nenasaLogo.png";
+import nenasaLogo from "../assets/NenasaLogo.png";
 
 const Home = () => {
   return (
