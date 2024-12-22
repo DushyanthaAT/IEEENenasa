@@ -5,6 +5,7 @@ import nenasaLogo from "../assets/NenasaLogo.png";
 import SIGHTBG from "../assets/SIGHT_BG.jpg";
 import SIGHT_Logo from "../assets/SIGHT_Logo.png";
 import WebButton from "../Components/WebButton";
+import WebFooter from "../Components/Footer";
 const Home = () => {
   return (
     <div className="mx-0 md:mx-16 lg:mx-32 flex flex-col">
@@ -18,7 +19,7 @@ const Home = () => {
             <span className="text-center">Projects Completed</span>
           </div>
         </div>
-        <div className="flex flex-col px-4 flex-1 gap-4">
+        <div className="flex flex-col px-4 flex-1 gap-4 items-center sm:items-start">
           <img src={nenasaLogo} alt="nenasa logo" className="w-40" />
           <span className="text-justify text-lg md:text-xl lg:text-xl md:pb-20">
             IEEE නැණස, is collaborative project between the SLSAC and IEEE Sri
@@ -57,6 +58,7 @@ const Home = () => {
           <WebButton title="Visit SIGHT" link="https://sight.ieee.lk/" />
         </div>
       </div>
+      <WebFooter />
     </div>
   );
 };
