@@ -2,31 +2,34 @@ import React, { useState } from "react";
 import NenasaLogo from "../assets/NenasaLogo.png";
 import { HiMenuAlt2 } from "react-icons/hi";
 import { HiMenuAlt3 } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 const Items = [
   {
     id: 1,
     title: "Home",
-    link: "#",
+    link: "/",
   },
   {
     id: 2,
     title: "Projects",
-    link: "#",
+    link: "/projects",
   },
   {
     id: 3,
     title: "About",
-    link: "#",
+    link: "/about",
   },
   {
     id: 4,
     title: "Contact",
-    link: "#",
+    link: "/contact",
   },
 ];
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [activateIndex, setActivateIndex] = useState(1);
+
   return (
     <div className="sticky top-0 z-50 flex py-2 px-7 items-center justify-between bg-white">
       <img
@@ -38,9 +41,17 @@ const Navbar = () => {
         {Items.map((Item) => (
           <li
             key={Item.id}
-            className=" text-gray-500 font-semibold text-lg hover:text-pri_blue"
+            className={`text-gray-500 font-semibold text-lg hover:text-pri_blue ${
+              activateIndex === Item.id
+                ? "text-pri_blue"
+                : "hover:text-pri_blue"
+            }`}
+            onClick={() => setActivateIndex(Item.id)}
           >
-            <a href={Item.link}>{Item.title}</a>
+            <Link to={Item.link}>{Item.title}</Link>
+            {activateIndex === Item.id && (
+              <div className="w-3 h-1.5 rounded-full bg-pri_blue mx-auto"></div>
+            )}
           </li>
         ))}
       </ul>
@@ -63,18 +74,23 @@ const Navbar = () => {
 
       {/* responsiveMenu */}
       <div
-        className={`z- 100 absolute sm:hidden top-16 left-0 w-full bg-white flex flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
+        className={`absolute top-16 left-0 w-full bg-white flex flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
           open ? "opacity-100" : "opacity-0"
         }`}
-        style={{ transition: "transform 0.3s ease, opacity 0.3s ease" }}
       >
         <ul className="flex flex-col gap-3 w-full items-center py-2">
           {Items.map((Item) => (
             <li
               key={Item.id}
-              className="text-gray-500 hover:text-white hover:bg-pri_blue w-[90%] text-center py-2 rounded-lg"
+              className={`text-gray-500 hover:text-white hover:bg-pri_blue w-[90%] text-center py-2 rounded-lg ${
+                activateIndex === Item.id ? "bg-pri_blue text-white" : ""
+              }`}
+              onClick={() => {
+                setActivateIndex(Item.id);
+                setOpen(false); // Close mobile menu on item click
+              }}
             >
-              <a href={Item.link}>{Item.title}</a>
+              <Link to={Item.link}>{Item.title}</Link>
             </li>
           ))}
         </ul>

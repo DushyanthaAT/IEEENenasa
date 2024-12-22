@@ -8,7 +8,7 @@ import WebButton from "../Components/WebButton";
 import WebFooter from "../Components/Footer";
 const Home = () => {
   return (
-    <div className="mx-0 md:mx-16 lg:mx-32 flex flex-col">
+    <div className="">
       <Navbar />
 
       <div className="flex flex-col items-center sm:flex-row sm:pt-10">
