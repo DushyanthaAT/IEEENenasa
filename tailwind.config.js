@@ -7,7 +7,11 @@ export default {
         pri_blue: "#1B609A",
         pri_orange: "#D14F15",
       },
+      height: {
+        100: "26rem",
+        128: "32rem",
+      },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/line-clamp")],
 };
