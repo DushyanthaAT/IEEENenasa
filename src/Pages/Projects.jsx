@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../Components/Navbar";
 import SIGHT_BG from "../assets/SIGHT_BG.jpg";
 import Test from "../assets/test.jpg";
+import Test2 from "../assets/test2.jpg";
 import Card from "../Components/Card";
 import WebFooter from "../Components/Footer";
 
@@ -20,7 +21,7 @@ const samplePosts = [
   {
     title: "title 3",
     description: "sample descripation 3",
-    image: SIGHT_BG,
+    image: Test2,
   },
   {
     title: "title 4",

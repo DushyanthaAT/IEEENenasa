@@ -36,7 +36,7 @@ const Navbar = () => {
     const activeItem = Items.findIndex(
       (item) => item.link === location.pathname
     );
-    setActivateIndex(activeItem === -1 ? 1 : activeItem + 1);
+    setActivateIndex(activeItem !== -1 ? activeItem + 1 : -1); // Setting to -1 when no match
   }, [location]);
 
   return (
@@ -50,7 +50,7 @@ const Navbar = () => {
         {Items.map((Item) => (
           <li
             key={Item.id}
-            className={` font-semibold text-lg hover:text-pri_blue ${
+            className={`font-semibold text-lg hover:text-pri_blue ${
               activateIndex === Item.id ? "text-pri_blue" : "text-gray-500"
             }`}
             onClick={() => setActivateIndex(Item.id)}

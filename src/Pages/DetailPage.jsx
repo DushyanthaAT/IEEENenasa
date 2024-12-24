@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import Navbar from "../Components/Navbar";
 import Test from "../assets/test.jpg";
+import Test2 from "../assets/test2.jpg";
 import SIGHT_BG from "../assets/SIGHT_BG.jpg";
 import { TbCalendarTime } from "react-icons/tb";
 import { MdOutlineLocationOn } from "react-icons/md";
 import WebFooter from "../Components/Footer";
 
-const images = [Test, SIGHT_BG, Test, Test, Test];
+const images = [Test, SIGHT_BG, Test, Test2, Test];
 
 const DetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
