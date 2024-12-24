@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import DetailPage from "./Pages/DetailPage";
 import Login from "./Pages/Admin/Login";
 import Dashboard from "./Pages/Admin/Dashboard";
+import CreatePost from "./Pages/Admin/CreatePost";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/projects/project" element={<DetailPage />} />
           <Route path="/about/admin" element={<Login />} />
           <Route path="/about/admin/dashboard" element={<Dashboard />} />
+          <Route path="/about/admin/create-post" element={<CreatePost />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -17,11 +17,11 @@ const AdminSideNav = () => {
   };
 
   return (
-    <div className="flex h-screen absolute md:relative">
+    <div className="flex h-screen absolute md:fixed">
       <div
         className={`${
           isNavOpen ? "flex-col" : "hidden"
-        } h-screen w-60 bg-pri_blue  pt-10 px-3 md:flex md:flex-col`}
+        } h-screen w-60 bg-pri_blue  pt-10 px-3 lg:flex lg:flex-col`}
       >
         <img src={NenasaLogo} alt="Nensa Logo" className="w-32 " />
         <div>
@@ -37,7 +37,7 @@ const AdminSideNav = () => {
                 Dashboard
               </li>
             </Link>
-            <Link to="/about/admin/dashboard">
+            <Link to="/about/admin/create-post">
               <li
                 className={`w-full block py-2 px-4 rounded-md text-white font-bold ${
                   location.pathname === "/about/admin/create-post"
@@ -65,7 +65,7 @@ const AdminSideNav = () => {
 
       <button
         onClick={toggleSideNav}
-        className="text-pri_blue md:hidden focus:outline-non rounded-xl flex justify-center items-center text-4xl font-bold"
+        className="text-pri_blue lg:hidden focus:outline-non rounded-xl flex justify-center items-center text-4xl font-bold"
       >
         {isNavOpen ? <LuPanelRightOpen /> : <LuPanelLeftOpen />}
       </button>

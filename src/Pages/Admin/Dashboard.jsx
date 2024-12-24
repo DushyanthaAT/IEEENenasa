@@ -21,24 +21,26 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex text-xs">
+    <div className="flex">
       <div className="">
         <AdminSideNav />
       </div>
-      <div className="w-full flex flex-col flex-1 p-6 items-center">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Dashboard</h2>
+      <div className=" flex-1 p-6 items-center lg:ml-64">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+          Dashboard
+        </h2>
 
         {/* Table */}
         <table className="min-w-full bg-gray-100  rounded-xl shadow-md ">
           <thead>
             <tr>
-              <th className="py-2 px-4 text-left border-r border-gray-300   font-medium text-gray-700 bg-gray-200 rounded-tl-xl w-2/4">
+              <th className="py-2 px-4 text-left border-r border-gray-300  text-sm font-medium text-gray-700 bg-gray-200 rounded-tl-xl w-2/4">
                 Title
               </th>
-              <th className="py-2 px-4 text-left border-r border-gray-300  font-medium text-gray-700 bg-gray-200 w-1/4">
+              <th className="py-2 px-4 text-left border-r border-gray-300 text-sm font-medium text-gray-700 bg-gray-200 w-1/4">
                 Date Uploaded
               </th>
-              <th className="py-2 px-4 text-left   font-medium text-gray-700 bg-gray-200 rounded-tr-xl w-1/4">
+              <th className="py-2 px-4 text-left  text-sm font-medium text-gray-700 bg-gray-200 rounded-tr-xl w-1/4">
                 Actions
               </th>
             </tr>
@@ -46,13 +48,13 @@ const Dashboard = () => {
           <tbody>
             {data.map((item) => (
               <tr key={item.id} className="hover:bg-gray-100">
-                <td className="py-2 px-4  text-gray-800  border-r border-gray-300 truncate max-w-xs">
+                <td className="py-2 px-4 text-sm text-gray-800  border-r border-gray-300 truncate max-w-xs">
                   {item.title}
                 </td>
-                <td className="py-2 px-4  text-gray-600  border-r border-gray-300">
+                <td className="py-2 px-4 text-sm text-gray-600  border-r border-gray-300">
                   {item.dateUploaded}
                 </td>
-                <td className="py-2 px-4  space-x-4 ">
+                <td className="py-2 px-4 text-sm space-x-4 ">
                   {/* Edit Button */}
                   <button
                     onClick={() => handleEdit(item.id)}
