@@ -8,7 +8,7 @@ const About = () => {
     <div>
       <Navbar />
       <div className="flex w-full justify-center">
-        <h2 className="text-2xl font-bold py-5 text-pri_blue ">About</h2>
+        <h2 className="text-2xl font-bold py-5 text-pri_blue ">About Us</h2>
       </div>
       <div className="mx-2 w-[full-4] flex flex-col items-center gap-5 mb-6">
         <img
