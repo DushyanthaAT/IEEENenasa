@@ -81,8 +81,8 @@ const Navbar = () => {
 
       {/* responsiveMenu */}
       <div
-        className={`sm:hidden absolute top-16 left-0 w-full bg-white flex flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
-          open ? "opacity-100" : "opacity-0"
+        className={`absolute top-16 left-0 w-full bg-white  flex-col items-center gap-6 font-semibold text-lg transform transition-transform duration-300 ${
+          open ? "flex" : "hidden"
         }`}
       >
         <ul className="flex flex-col gap-3 w-full items-center py-2">
