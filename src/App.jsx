@@ -8,6 +8,7 @@ import DetailPage from "./Pages/DetailPage";
 import Login from "./Pages/Admin/Login";
 import Dashboard from "./Pages/Admin/Dashboard";
 import CreatePost from "./Pages/Admin/CreatePost";
+import PrivateRoute from "./Components/PrivateRoute";
 
 const App = () => {
   return (
@@ -20,8 +21,10 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/projects/project" element={<DetailPage />} />
           <Route path="/about/admin" element={<Login />} />
-          <Route path="/about/admin/dashboard" element={<Dashboard />} />
-          <Route path="/about/admin/create-post" element={<CreatePost />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/about/admin/dashboard" element={<Dashboard />} />
+            <Route path="/about/admin/create-post" element={<CreatePost />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>
