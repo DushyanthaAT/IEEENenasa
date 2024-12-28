@@ -24,8 +24,24 @@ const Dashboard = () => {
     console.log(`Edit item with id: ${id}`);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete item with id: ${id}`);
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        const response = await fetch(`/api/post/deletepost/${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          setPosts((prevPosts) => prevPosts.filter((post) => post._id !== id));
+          alert("Post deleted successfully!");
+        } else {
+          alert("Failed to delete the post.");
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        alert("An error occurred while deleting the post.");
+      }
+    }
   };
 
   return (
