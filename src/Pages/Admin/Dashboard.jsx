@@ -1,16 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AdminSideNav from "../../Components/AdminSideNav";
 
 const Dashboard = () => {
-  const data = [
-    {
-      id: 1,
-      title: "Project 1 ",
-      dateUploaded: "2024-12-01",
-    },
-    { id: 2, title: "Project 2", dateUploaded: "2024-12-05" },
-    { id: 3, title: "Project 3", dateUploaded: "2024-12-10" },
-  ];
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/post/getposts");
+        const data = await res.json();
+        setPosts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
 
   const handleEdit = (id) => {
     console.log(`Edit item with id: ${id}`);
@@ -46,18 +54,18 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-100">
+            {posts.map((post) => (
+              <tr key={post._id} className="hover:bg-gray-100">
                 <td className="py-2 px-4 text-sm text-gray-800  border-r border-gray-300 truncate max-w-xs">
-                  {item.title}
+                  {post.title}
                 </td>
                 <td className="py-2 px-4 text-sm text-gray-600  border-r border-gray-300">
-                  {item.dateUploaded}
+                  {new Date(post.createdAt).toLocaleDateString() || "N/A"}
                 </td>
                 <td className="py-2 px-4 text-sm space-x-4 ">
                   {/* Edit Button */}
                   <button
-                    onClick={() => handleEdit(item.id)}
+                    onClick={() => handleEdit(post._id)}
                     className="text-blue-500 hover:text-blue-700 focus:outline-none"
                   >
                     <svg
@@ -77,7 +85,7 @@ const Dashboard = () => {
                   </button>
                   {/* Delete Button */}
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(post._id)}
                     className="text-red-500 hover:text-red-700 focus:outline-none"
                   >
                     <svg

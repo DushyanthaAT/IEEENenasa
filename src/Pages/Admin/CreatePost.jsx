@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AdminSideNav from "../../Components/AdminSideNav";
+import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,10 @@ const CreatePost = () => {
     description: "",
     images: [],
   });
+
+  const [publishError, setPublishError] = useState(null);
+
+  const navigate = useNavigate();
 
   // Handle input change
   const handleChange = (e) => {
@@ -34,10 +39,29 @@ const CreatePost = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
-    // Here you can add logic to send this data to a server or database
+    try {
+      const res = await fetch("/api/post/create-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPublishError(null);
+        navigate("/about/admin/dashboard");
+        return;
+      }
+    } catch (error) {
+      setPublishError("Something went wrong");
+    }
   };
 
   return (
@@ -148,7 +172,7 @@ const CreatePost = () => {
             </div>
 
             {/* Upload Images */}
-            <div className="form-group">
+            {/* <div className="form-group">
               <label
                 htmlFor="images"
                 className="block font-medium text-gray-700 mb-2"
@@ -173,7 +197,7 @@ const CreatePost = () => {
                     }: ${image.name}`}</p>
                   ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <button
