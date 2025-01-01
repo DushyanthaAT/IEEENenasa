@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AdminSideNav from "../../Components/AdminSideNav";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -10,7 +11,7 @@ const Dashboard = () => {
       try {
         const res = await fetch("/api/post/getposts");
         const data = await res.json();
-        setPosts(data);
+        setPosts(data.posts);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -80,25 +81,27 @@ const Dashboard = () => {
                 </td>
                 <td className="py-2 px-4 text-sm space-x-4 ">
                   {/* Edit Button */}
-                  <button
-                    onClick={() => handleEdit(post._id)}
-                    className="text-blue-500 hover:text-blue-700 focus:outline-none"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
+                  <Link to={`/about/admin/update-post/${post._id}`}>
+                    <button
+                      onClick={() => handleEdit(post._id)}
+                      className="text-blue-500 hover:text-blue-700 focus:outline-none"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 20h9M14.828 3.172a4 4 0 015.657 5.657L6 16V12l8.828-8.828z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 20h9M14.828 3.172a4 4 0 015.657 5.657L6 16V12l8.828-8.828z"
+                        />
+                      </svg>
+                    </button>
+                  </Link>
                   {/* Delete Button */}
                   <button
                     onClick={() => handleDelete(post._id)}

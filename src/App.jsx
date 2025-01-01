@@ -9,8 +9,12 @@ import Login from "./Pages/Admin/Login";
 import Dashboard from "./Pages/Admin/Dashboard";
 import CreatePost from "./Pages/Admin/CreatePost";
 import PrivateRoute from "./Components/PrivateRoute";
+import UpdatePost from "./Pages/Admin/updatePost";
+import supabase from "./config/supabaseClient";
 
 const App = () => {
+  console.log(supabase);
+
   return (
     <div className="mx-0 md:mx-16 lg:mx-32">
       <BrowserRouter>
@@ -24,6 +28,10 @@ const App = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/about/admin/dashboard" element={<Dashboard />} />
             <Route path="/about/admin/create-post" element={<CreatePost />} />
+            <Route
+              path="/about/admin/update-post/:postId"
+              element={<UpdatePost />}
+            />
           </Route>
         </Routes>
       </BrowserRouter>
