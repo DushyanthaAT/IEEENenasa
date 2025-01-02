@@ -2,11 +2,11 @@ import React from "react";
 import { ImArrowUpRight2 } from "react-icons/im";
 import { Link } from "react-router-dom";
 
-const Card = ({ title, description, image }) => {
+const Card = ({ title, description, image, post }) => {
   return (
     <div className="flex flex-col bg-[#f4f1f1] w-full lg:h-100 p-2 m-4 rounded-xl drop-shadow-[0_10px_10px_rgba(0,0,0,0.10)] overflow-hidden ">
       <div className="self-end">
-        <Link to="/projects/project">
+        <Link to={`/projects/${post}`}>
           <div className="bg-white w-10 h-10 rounded-full flex items-center justify-center mb-4 hover:bg-pri_blue">
             <ImArrowUpRight2 />
           </div>
