@@ -1,23 +1,77 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
-import Test from "../assets/test.jpg";
-import Test2 from "../assets/test2.jpg";
-import SIGHT_BG from "../assets/SIGHT_BG.jpg";
 import { TbCalendarTime } from "react-icons/tb";
 import { MdOutlineLocationOn } from "react-icons/md";
 import WebFooter from "../Components/Footer";
-
-const images = [Test, SIGHT_BG, Test, Test2, Test];
+import { Link, useParams } from "react-router-dom";
+import dayjs from "dayjs";
+import supabase from "../config/supabaseClient";
 
 const DetailPage = () => {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const [selectedImage, setSelectedImage] = useState();
+  const [post, setPost] = useState([0]);
+  const { postSlug } = useParams();
+  const [error, setError] = useState(null);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const res = await fetch(`/api/post/getposts?slug=${postSlug}`);
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+        setPost(data.posts);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    fetchPost();
+  }, [postSlug]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("NenasaImageTable")
+          .select("*")
+          .eq("slug", postSlug);
+
+        if (error) {
+          throw error;
+        }
+        setImages(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchImages();
+  }, []);
+  const getImageForPost = (slug) => {
+    const image = images.find((image) => image.slug === slug);
+    console.log(image);
+
+    return image ? image.image_url : null;
+  };
+
+  useEffect(() => {
+    if (postSlug && images.length > 0) {
+      const imageForPost = getImageForPost(postSlug);
+      setSelectedImage(imageForPost);
+    }
+  }, [postSlug, images]);
+
   return (
     <div>
       <Navbar />
 
       <div className="mx-2">
         <div className="flex w-full justify-center">
-          <h2 className="text-2xl font-bold py-5 text-pri_blue ">Projects</h2>
+          <h2 className="text-2xl font-bold py-5 text-pri_blue ">
+            {post[0].title}
+          </h2>
         </div>
         <div className="flex flex-col items-center">
           {/* Big Image */}
@@ -32,14 +86,14 @@ const DetailPage = () => {
             {images.map((image, index) => (
               <img
                 key={index}
-                src={image}
+                src={image.image_url}
                 alt={`Thumbnail ${index + 1}`}
                 className={`w-24 h-16 lg:w-32 lg:h-20 rounded-md border-2 transition-all duration-200 ease-in-out object-cover hover:opacity-65 ${
-                  selectedImage === image
+                  selectedImage === image.image_url
                     ? "border-pri_blue"
                     : "border-transparent"
                 } hover:border-pri_blue`}
-                onClick={() => setSelectedImage(image)}
+                onClick={() => setSelectedImage(image.image_url)}
               />
             ))}
           </div>
@@ -54,10 +108,12 @@ const DetailPage = () => {
               <div className="flex flex-col flex-[2] h-full">
                 <h3 className="pb-2 font-bold text-pri_blue">Date and Time</h3>
                 <span className="text-sm  md:text-base">
-                  <strong>Date:</strong> 10 Sep 2024
+                  <strong>Date: </strong>
+                  {dayjs(post[0].date, "DD/MM/YYYY").format("DD MMM YYYY")}
                 </span>
                 <span className="text-sm md:text-base">
-                  <strong>Time:</strong> 05:00 PM
+                  <strong>Time: </strong>
+                  {dayjs(`2023-01-01T${post[0].time}:00`).format("h:mm A")}
                 </span>
               </div>
             </div>
@@ -69,7 +125,7 @@ const DetailPage = () => {
               <div className="flex flex-col flex-[2] h-full ">
                 <h3 className="pb-2 font-bold text-pri_blue">Location</h3>
                 <span className="text-sm  md:text-base">
-                  Mock Location, mock city
+                  {post[0].location}
                 </span>
               </div>
             </div>
@@ -77,25 +133,7 @@ const DetailPage = () => {
         </div>
 
         <div className="mt-5 flex justify-center">
-          <p className="text-justify max-w-5xl ">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi
-            mollitia adipisci ut placeat! Repellendus quidem cumque perspiciatis
-            nulla molestiae. Ut laudantium eaque molestiae fugiat amet aut natus
-            pariatur eos quo. Obcaecati modi ex, reprehenderit soluta fugit enim
-            autem natus dignissimos accusamus neque, rem esse dicta odio
-            dolorem, consectetur laborum delectus aliquid! Laboriosam, sed
-            voluptates eius perferendis nostrum est praesentium sint. Qui
-            deserunt corporis nisi ad magnam, itaque cumque voluptatibus minus
-            quis totam atque consequuntur recusandae unde voluptatem tempore
-            vitae eligendi! Mollitia quo qui cumque placeat autem asperiores,
-            praesentium quis impedit! Mollitia doloremque eos suscipit pariatur
-            at deserunt quia? Quisquam doloribus, labore fuga atque commodi odio
-            eum a consequuntur ullam, dolores, suscipit adipisci velit rerum
-            fugit fugiat! Quibusdam saepe id ullam. Unde a suscipit dignissimos!
-            Enim nemo, autem iusto quis consectetur nihil alias ut soluta ipsa
-            porro blanditiis mollitia tempora voluptatibus labore expedita harum
-            deleniti ex debitis, quos dolor esse facilis!
-          </p>
+          <p className="text-justify max-w-5xl ">{post[0].description}</p>
         </div>
       </div>
       <WebFooter />
