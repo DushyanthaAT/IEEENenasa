@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://ieee-nenasa-backend.vercel.app/",
+        target: "http://localhost:5002",
         secure: false,
       },
     },

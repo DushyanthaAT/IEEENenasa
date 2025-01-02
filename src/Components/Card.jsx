@@ -25,7 +25,6 @@ const Card = ({ title, description, image, post }) => {
           src={image}
           alt={title}
           className="rounded-2xl object-cover w-full h-64"
-          loading="lazy"
         />
       </div>
     </div>
