@@ -5,32 +5,57 @@ import Test from "../assets/test.jpg";
 import Test2 from "../assets/test2.jpg";
 import Card from "../Components/Card";
 import WebFooter from "../Components/Footer";
-
-const samplePosts = [
-  {
-    title: "title 1",
-    description:
-      "sample descripation 1 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.   ",
-    image: SIGHT_BG,
-  },
-  {
-    title: "title 2",
-    description: "sample descripation 2",
-    image: Test,
-  },
-  {
-    title: "title 3",
-    description: "sample descripation 3",
-    image: Test2,
-  },
-  {
-    title: "title 4",
-    description: "sample descripation 4",
-    image: SIGHT_BG,
-  },
-];
+import { useEffect, useState } from "react";
+import supabase from "../config/supabaseClient";
 
 const Projects = () => {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/post/getposts");
+        if (!res.ok) {
+          throw new Error("Failed to fetch posts");
+        }
+        const data = await res.json();
+        setPosts(data.posts);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("NenasaImageTable")
+          .select("*");
+
+        if (error) {
+          throw error;
+        }
+        setImages(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchImages();
+  }, []);
+  const getImageForPost = (slug) => {
+    const image = images.find((image) => image.slug === slug);
+    return image ? image.image_url : null;
+  };
+
   return (
     <div>
       <Navbar />
@@ -39,12 +64,16 @@ const Projects = () => {
       </div>
       <div className="flex justify-center w-[full-6] md:w-full mx-3 md:mx-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-0 justify-items-center  w-full">
-          {samplePosts.map((samplePost, index) => (
+          {posts.map((post, index) => (
             <Card
               key={index}
-              title={samplePost.title}
-              description={samplePost.description}
-              image={samplePost.image}
+              title={post.title}
+              description={post.description}
+              time={post.time}
+              date={post.date}
+              location={post.location}
+              image={getImageForPost(post.slug)}
+              post={post.slug}
             />
           ))}
         </div>
