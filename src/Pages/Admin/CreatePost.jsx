@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminSideNav from "../../Components/AdminSideNav";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../config/supabaseClient.js";
 
 const CreatePost = () => {
   const [formData, setFormData] = useState({
@@ -9,38 +10,87 @@ const CreatePost = () => {
     date: "",
     location: "",
     description: "",
-    images: [],
+    slug: "",
   });
 
+  const [images, setImages] = useState([]);
+
   const [publishError, setPublishError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  const createSlug = (e) => {
+    const slug = e
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9-]/g, "");
+    setFormData((prevState) => ({
+      ...prevState,
+      slug,
+    }));
+  };
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    if (name == "title") {
+      createSlug(value);
+    }
+    setFormData((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
   };
 
-  // Handle file input change (multiple images)
-  const handleFileChange = (e) => {
+  const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + formData.images.length <= 5) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, ...files],
-      });
-    } else {
-      alert("You can upload a maximum of 5 images.");
-    }
+    setImages(files);
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      let count = 0;
+      const uploadedImagePaths = await Promise.all(
+        images.map(async (image) => {
+          const filePath = `${formData.slug}/${count}`;
+          count = count + 1;
+          const { data: storageData, error: storageError } =
+            await supabase.storage.from("NenasaImages").upload(filePath, image);
+
+          if (storageError) {
+            throw storageError;
+          }
+
+          const { data: publicUrlData } = supabase.storage
+            .from("NenasaImages")
+            .getPublicUrl(filePath);
+
+          return { filePath, publicUrl: publicUrlData.publicUrl }; // Return the uploaded image path
+        })
+      );
+      const imageRecords = uploadedImagePaths.map(
+        ({ filePath, publicUrl }) => ({
+          slug: formData.slug,
+          image_url: publicUrl,
+          image_id: filePath,
+        })
+      );
+
+      const { error: imageError } = await supabase
+        .from("NenasaImageTable")
+        .insert(imageRecords);
+
+      if (imageError) {
+        console.log(imageError);
+        throw imageError;
+      }
+    } catch (error) {
+      console.log(error);
+    }
     try {
       const res = await fetch("/api/post/create-post", {
         method: "POST",
@@ -52,6 +102,7 @@ const CreatePost = () => {
       const data = await res.json();
       if (!res.ok) {
         setPublishError(data.message);
+        setLoading(false);
         return;
       }
       if (res.ok) {
@@ -61,6 +112,7 @@ const CreatePost = () => {
       }
     } catch (error) {
       setPublishError("Something went wrong");
+      setLoading(false);
     }
   };
 
@@ -172,7 +224,7 @@ const CreatePost = () => {
             </div>
 
             {/* Upload Images */}
-            {/* <div className="form-group">
+            <div className="form-group">
               <label
                 htmlFor="images"
                 className="block font-medium text-gray-700 mb-2"
@@ -180,31 +232,19 @@ const CreatePost = () => {
                 Upload Images (Max 5):
               </label>
               <input
-                id="images"
                 type="file"
-                name="images"
-                accept="image/*"
-                onChange={handleFileChange}
                 multiple
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
+                accept="image/*"
+                onChange={handleImageChange}
               />
-              <div className="mt-2">
-                {formData.images.length > 0 &&
-                  formData.images.map((image, index) => (
-                    <p key={index} className="text-gray-600">{`Image ${
-                      index + 1
-                    }: ${image.name}`}</p>
-                  ))}
-              </div>
-            </div> */}
+            </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               className="w-full p-3 bg-pri_blue text-white font-semibold rounded-lg hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Create Post
+              {loading ? "Updating..." : "Create Post"}
             </button>
           </form>
         </div>
