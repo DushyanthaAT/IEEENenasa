@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AdminSideNav from "../../Components/AdminSideNav";
 import { useNavigate, useParams } from "react-router-dom";
+import supabase from "../../config/supabaseClient.js";
 
 const UpdatePost = () => {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
-
+  const [images, setImages] = useState([]);
   const navigate = useNavigate();
   const { postId } = useParams();
 
@@ -25,6 +26,7 @@ const UpdatePost = () => {
             .toISOString()
             .split("T")[0];
           setFormData({ ...data.posts[0], date: formattedDate });
+          setImages(data.posts[0].images || []);
         }
       };
 
@@ -46,29 +48,71 @@ const UpdatePost = () => {
   // Handle file input change (multiple images)
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + formData.images.length <= 5) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, ...files],
-      });
+    if (files.length + images.length <= 5) {
+      setImages([...images, ...files]);
     } else {
       alert("You can upload a maximum of 5 images.");
     }
   };
 
+  // Handle image upload
+  const handleImageUpload = async () => {
+    let count = 0;
+    const uploadedImagePaths = await Promise.all(
+      images.map(async (image) => {
+        const filePath = `${formData.slug}/${count}`;
+        count += 1;
+        const { data: storageData, error: storageError } =
+          await supabase.storage.from("NenasaImages").upload(filePath, image);
+
+        if (storageError) {
+          throw storageError;
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("NenasaImages")
+          .getPublicUrl(filePath);
+
+        return { filePath, publicUrl: publicUrlData.publicUrl }; // Return the uploaded image path
+      })
+    );
+    return uploadedImagePaths;
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      const uploadedImagePaths = await handleImageUpload();
+
+      const imageRecords = uploadedImagePaths.map(
+        ({ filePath, publicUrl }) => ({
+          slug: formData.slug,
+          image_url: publicUrl,
+          image_id: filePath,
+        })
+      );
+
+      const { error: imageError } = await supabase
+        .from("NenasaImageTable")
+        .insert(imageRecords);
+
+      if (imageError) {
+        console.log(imageError);
+        throw imageError;
+      }
+
+      const updatedPost = { ...formData, images: imageRecords };
       const res = await fetch(`/api/post/updatepost/${formData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedPost),
       });
+
       const data = await res.json();
-      console.log("clicc");
       if (!res.ok) {
         setPublishError(data.message);
         return;
@@ -77,10 +121,10 @@ const UpdatePost = () => {
       if (res.ok) {
         setPublishError(null);
         navigate("/about/admin/dashboard");
-        console.log("adsd");
       }
     } catch (error) {
       console.log("Something went wrong");
+      setPublishError("Something went wrong");
     }
   };
 
@@ -89,10 +133,8 @@ const UpdatePost = () => {
       <AdminSideNav />
 
       <div className="w-full flex flex-col justify-center items-center">
-        <div className="p-6 md:p-10 lg:ml-64  max-w-3xl w-full">
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            Create a New Post
-          </h2>
+        <div className="p-6 md:p-10 lg:ml-64 max-w-3xl w-full">
+          <h2 className="text-2xl font-bold mb-6 text-center">Update Post</h2>
           <form
             onSubmit={handleSubmit}
             className="space-y-6 bg-gray-100 p-6 rounded-xl w-full"
@@ -109,7 +151,7 @@ const UpdatePost = () => {
                 id="title"
                 type="text"
                 name="title"
-                value={formData.title}
+                value={formData.title || ""}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -128,7 +170,7 @@ const UpdatePost = () => {
                 id="time"
                 type="time"
                 name="time"
-                value={formData.time}
+                value={formData.time || ""}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -147,7 +189,7 @@ const UpdatePost = () => {
                 id="date"
                 type="date"
                 name="date"
-                value={formData.date}
+                value={formData.date || ""}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -166,7 +208,7 @@ const UpdatePost = () => {
                 id="location"
                 type="text"
                 name="location"
-                value={formData.location}
+                value={formData.location || ""}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -184,7 +226,7 @@ const UpdatePost = () => {
               <textarea
                 id="description"
                 name="description"
-                value={formData.description}
+                value={formData.description || ""}
                 onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -192,7 +234,7 @@ const UpdatePost = () => {
             </div>
 
             {/* Upload Images */}
-            {/* <div className="form-group">
+            <div className="form-group">
               <label
                 htmlFor="images"
                 className="block font-medium text-gray-700 mb-2"
@@ -200,24 +242,12 @@ const UpdatePost = () => {
                 Upload Images (Max 5):
               </label>
               <input
-                id="images"
                 type="file"
-                name="images"
+                multiple
                 accept="image/*"
                 onChange={handleFileChange}
-                multiple
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
               />
-              <div className="mt-2">
-                {formData.images.length > 0 &&
-                  formData.images.map((image, index) => (
-                    <p key={index} className="text-gray-600">{`Image ${
-                      index + 1
-                    }: ${image.name}`}</p>
-                  ))}
-              </div>
-            </div> */}
+            </div>
 
             {/* Submit Button */}
             <button
