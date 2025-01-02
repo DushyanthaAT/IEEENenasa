@@ -9,7 +9,7 @@ import Login from "./Pages/Admin/Login";
 import Dashboard from "./Pages/Admin/Dashboard";
 import CreatePost from "./Pages/Admin/CreatePost";
 import PrivateRoute from "./Components/PrivateRoute";
-import UpdatePost from "./Pages/Admin/updatePost";
+import UpdatePost from "./Pages/Admin/UpdatePost";
 
 const App = () => {
   return (
