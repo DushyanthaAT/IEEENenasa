@@ -16,7 +16,9 @@ const Projects = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("/api/post/getposts");
+        const res = await fetch(
+          "https://ieee-nenasa-backend.vercel.app/api/post/getposts"
+        );
         if (!res.ok) {
           throw new Error("Failed to fetch posts");
         }
